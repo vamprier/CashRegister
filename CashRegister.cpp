@@ -145,7 +145,7 @@ void CashRegister::scanfItems(	const string& itemLists,
 		string query = str;
 		vector<vector<string> > dataSet;
 		string info = readData(query,dataSet);
-		if( info.compare("success"))
+		if( info.compare("success")  || dataSet.size() == 0)
 		{
 			continue;
 		}
