@@ -18,8 +18,14 @@ int main(int argv,char** argc)
 	//初始化收银机类对象
 	CashRegister cg;
 	//调用扫描函数
-	cg.scanfItems(str,",");
+	string info = cg.scanfItems(str,",","[","]");
+	if( info.compare("success"))
+	{
+		cout<<info<<endl;
+		return 0;
+	}
 	//调用打印函数
 	cg.printItems();
+	//
 	return 0;
 }

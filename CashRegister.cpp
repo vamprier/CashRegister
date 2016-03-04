@@ -47,16 +47,6 @@ void deleteSomeChar(string& str,char ch)
 //===========================================
 CashRegister::CashRegister() {
 	// TODO Auto-generated constructor stub
-	PreferentialActivities p1,p2;
-	p1.name = "买二赠一";
-	p1.priority = 2;
-	p1.items.push_back("ITEM000001");
-	p1.items.push_back("ITEM000007");
-	preActivity.push_back(p1);
-	p2.name = "95折";
-	p2.priority = 1;
-	p2.items.push_back("ITEM000014");
-	preActivity.push_back(p2);
 }
 
 //===========================================
@@ -128,17 +118,60 @@ string CashRegister::readData(	const string& query,
 }
 
 //===========================================
+//readPreferential函数说明
+//函数功能： 获得商品的优惠信息
+//参数：    无
+//函数返回： 无
+//===========================================
+void CashRegister::readPreferential()
+{
+	string query = "select name,itemLists from preferential";
+	vector<vector<string> > dataSet;
+	string info = readData(query,dataSet);
+	if( info.compare("success") || dataSet.size() == 0)
+	{
+		return;
+	}
+	int size = dataSet.size();
+	for(int i=0;i<size;i++)
+	{
+		//
+		PreferentialActivities p;
+		p.name = dataSet[i][0];
+		//删除'字符
+		deleteSomeChar(dataSet[i][1],'\'');
+		char* token = NULL;
+		char* buffer = const_cast<char*>(dataSet[i][1].c_str());
+		while( (token = strsep(&buffer,",")) != NULL)
+		{
+			p.items.push_back(token);
+		}
+		preActivity.push_back(p);
+	}
+}
+
+//===========================================
 //scanfItems函数说明
 //函数功能：扫描购买的商品，输入条码列表，获得购物信息
 //参数：    itemLists：条码列表
 //		   sperator：分割符
 //函数返回： 无
 //===========================================
-void CashRegister::scanfItems(	const string& itemLists,
-								const char* sperator)
+string CashRegister::scanfItems(	const string& itemLists,
+									const char* sperator,
+									const char* start,
+									const char* end)
 {
 	//处理输入字符串，去掉头尾符号
-	string substr = itemLists.substr(1,itemLists.size()-2);
+	size_t spos = itemLists.find(start);
+	size_t epos = itemLists.find(end);
+	if(spos == string::npos || epos == string::npos)
+	{
+		return "error:input string error";
+	}
+	//读取优惠信息
+	readPreferential();
+	string substr = itemLists.substr(spos+1,epos-(spos+2));
 	//使用分割符分割输入的字符串
 	char* token = NULL;
 	char* buffer = const_cast<char*>(substr.c_str());
@@ -169,11 +202,7 @@ void CashRegister::scanfItems(	const string& itemLists,
 		string query = str;
 		vector<vector<string> > dataSet;
 		string info = readData(query,dataSet);
-<<<<<<< HEAD
 		if( info.compare("success") || dataSet.size() == 0)
-=======
-		if( info.compare("success")  || dataSet.size() == 0)
->>>>>>> origin/master
 		{
 			continue;
 		}
@@ -207,7 +236,7 @@ void CashRegister::scanfItems(	const string& itemLists,
 		}
 		PerchaseGoods.push_back(g);
 	}
-	//
+	return "success";
 }
 
 //===========================================

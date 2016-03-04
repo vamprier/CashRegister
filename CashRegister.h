@@ -74,9 +74,14 @@ private:
 	string readData(	const string& query,
 						vector<vector<string> >& dataSet);  //从数据库读取数据
 
+	void readPreferential();	//获得优惠活动信息
 public:
-	void scanfItems(	const string& itemLists,
-						const char* sperator);	//扫描购买的商品
+
+	string scanfItems(	const string& itemLists,
+						const char* sperator,
+						const char* start,
+						const char* end);	//扫描购买的商品
+
 	void printItems();	//打印小票
 
 private:
