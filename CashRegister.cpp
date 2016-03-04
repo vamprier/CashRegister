@@ -20,6 +20,28 @@ bool Less(const pair<string,int>& s1, const pair<string,int>& s2)
 }
 
 //===========================================
+//deleteSomeChar函数说明
+//函数功能：删除字符串中的特定字符
+//参数：    str：字符串
+//          ch：特定字符
+//函数返回：  无
+//===========================================
+void deleteSomeChar(string& str,char ch)
+{
+	for (string::iterator it = str.begin();it != str.end();)
+	{
+		if (*it == ch)
+		{
+			it = str.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+//===========================================
 //CashRegister函数说明
 //函数功能：构造函数
 //===========================================
@@ -124,6 +146,8 @@ void CashRegister::scanfItems(	const string& itemLists,
 	{
 		//查找字符‘-’
 		string tempStr = token;
+		//删除'字符
+		deleteSomeChar(tempStr,'\'');
 		size_t pos = tempStr.find('-');
 		if( pos != string::npos)
 		{
@@ -133,7 +157,7 @@ void CashRegister::scanfItems(	const string& itemLists,
 		}
 		else
 		{
-			itemMap[token]+=1;
+			itemMap[tempStr]+=1;
 		}
 	}
 	//查询商品信息
@@ -145,7 +169,7 @@ void CashRegister::scanfItems(	const string& itemLists,
 		string query = str;
 		vector<vector<string> > dataSet;
 		string info = readData(query,dataSet);
-		if( info.compare("success"))
+		if( info.compare("success") || dataSet.size() == 0)
 		{
 			continue;
 		}
