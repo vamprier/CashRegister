@@ -169,7 +169,11 @@ void CashRegister::scanfItems(	const string& itemLists,
 		string query = str;
 		vector<vector<string> > dataSet;
 		string info = readData(query,dataSet);
+<<<<<<< HEAD
 		if( info.compare("success") || dataSet.size() == 0)
+=======
+		if( info.compare("success")  || dataSet.size() == 0)
+>>>>>>> origin/master
 		{
 			continue;
 		}
