@@ -31,25 +31,16 @@ using namespace std;
 */
 struct goods
 {
-	string name;				//名称
-	string unit;				//计量单位
-	float price;				//价格
-	string category;			//类别
-	string barCode;				//条形码
-	int totalNumber;			//购买数量
-	string preferentialName;	//优惠名称
-	float totalPrice;			//总价格
-	float preferentialPrice;	//优惠价格
-};
-
-/**
- * 优惠活动
-*/
-struct PreferentialActivities
-{
-	string name;			//名称
-	int priority;			//活动执行的优先级
-	vector<string> items;	//参加优惠活动的商品
+	string name;					//名称
+	string unit;					//计量单位
+	float price;					//价格
+	string category;				//类别
+	string barCode;					//条形码
+	int totalNumber;				//购买数量
+	vector<string> preferentialList;	//商品参加的优惠活动列表
+	string preferentialName;		//优惠名称
+	float totalPrice;				//总价格
+	float preferentialPrice;		//优惠价格
 };
 
 /**
@@ -74,7 +65,7 @@ private:
 	string readData(	const string& query,
 						vector<vector<string> >& dataSet);  //从数据库读取数据
 
-	void readPreferential();	//获得优惠活动信息
+	int readPreferential(const string& pname);	//获得优惠活动信息
 public:
 
 	string scanfItems(	const string& itemLists,
@@ -87,7 +78,6 @@ public:
 private:
 	map<string,int> itemMap;		//商品的购买数量
 	vector<goods> PerchaseGoods;	//购买的商品信息
-	vector<PreferentialActivities> preActivity; //优惠活动信息
 	vector<buyGifts> bgVec;//买二赠一商品信息
 
 };

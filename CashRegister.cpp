@@ -56,7 +56,6 @@ CashRegister::CashRegister() {
 CashRegister::~CashRegister() {
 	// TODO Auto-generated destructor stub
 	vector<goods>().swap(PerchaseGoods);	//
-	vector<PreferentialActivities>().swap(preActivity); //
 	vector<buyGifts>().swap(bgVec);
 }
 
@@ -123,31 +122,17 @@ string CashRegister::readData(	const string& query,
 //参数：    无
 //函数返回： 无
 //===========================================
-void CashRegister::readPreferential()
+int CashRegister::readPreferential(const string& pname)
 {
-	string query = "select name,itemLists from preferential";
+	char str[256];
+	string query = "select prioprity from preferential where name = "+pname;
 	vector<vector<string> > dataSet;
 	string info = readData(query,dataSet);
 	if( info.compare("success") || dataSet.size() == 0)
 	{
-		return;
+		return 0;
 	}
-	int size = dataSet.size();
-	for(int i=0;i<size;i++)
-	{
-		//
-		PreferentialActivities p;
-		p.name = dataSet[i][0];
-		//删除'字符
-		deleteSomeChar(dataSet[i][1],'\'');
-		char* token = NULL;
-		char* buffer = const_cast<char*>(dataSet[i][1].c_str());
-		while( (token = strsep(&buffer,",")) != NULL)
-		{
-			p.items.push_back(token);
-		}
-		preActivity.push_back(p);
-	}
+	return atoi(dataSet[0][0].c_str());
 }
 
 //===========================================
@@ -169,8 +154,6 @@ string CashRegister::scanfItems(	const string& itemLists,
 	{
 		return "error:input string error";
 	}
-	//读取优惠信息
-	readPreferential();
 	string substr = itemLists.substr(spos+1,epos-(spos+2));
 	//使用分割符分割输入的字符串
 	char* token = NULL;
@@ -198,7 +181,7 @@ string CashRegister::scanfItems(	const string& itemLists,
 	for( ; it != itemMap.end();++it)
 	{
 		char str[256];
-		sprintf(str,"select name,unit,price,category,barcode from goods where barcode = \"%s\"",(it->first).c_str());
+		sprintf(str,"select name,unit,price,category,barcode,preferentialList from goods where barcode = \"%s\"",(it->first).c_str());
 		string query = str;
 		vector<vector<string> > dataSet;
 		string info = readData(query,dataSet);
@@ -213,24 +196,26 @@ string CashRegister::scanfItems(	const string& itemLists,
 		g.category = dataSet[0][3];
 		g.barCode = dataSet[0][4];
 		g.totalNumber = it->second;
-		//查询商品的优惠活动
-		int size = preActivity.size();
-		vector<pair<string,int> > preVec;
-		for( int i=0;i<size;i++)
+		char* token = NULL;
+		char* buffer = const_cast<char*>(dataSet[0][5].c_str());
+		while( (token = strsep(&buffer,",")) != NULL)
 		{
-			vector<string>::const_iterator it = find((preActivity[i].items).begin(),(preActivity[i].items).end(),g.barCode);
-			if( it != (preActivity[i].items).end())
-			{
-				preVec.push_back(make_pair(preActivity[i].name,preActivity[i].priority));
-			}
+			g.preferentialList.push_back(token);
 		}
+		//查询商品的优惠活动
+		int size = g.preferentialList.size();
 		//得到商品的优惠活动名称
-		if( preVec.size() == 0)
+		if( size == 0)
 		{
 			g.preferentialName = "";
 		}
 		else
 		{
+			vector<pair<string,int> > preVec;
+			for( int i=0;i<size;i++)
+			{
+				preVec.push_back(make_pair(g.preferentialList[i],readPreferential(g.preferentialList[i])));
+			}
 			sort(preVec.begin(),preVec.end(),Less);
 			g.preferentialName = preVec[0].first;
 		}
