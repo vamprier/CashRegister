@@ -1,0 +1,4 @@
+文件说明：
+1、basicInfo.h和basicInfo.cpp中是优惠信息类和商品信息类的定义及实现
+2、CashSuper.h和CashSuper.cpp中是优惠活动策略类的定义及实现
+3、CashRegister.h和CashRegister.cpp是收银机类，该类实现了多个方法，包括添加商品、添加优惠活动，输入条码打印购买商品信息
