@@ -1,30 +1,18 @@
-/*
- * CashRegister.cpp
- *
- *  Created on: Mar 2, 2016
- *      Author: zhaojuan
- */
+////////////////////////////////////////////////////////////
+//ÎÄ ¼ş Ãû£ºCashRegister.cpp
+//¿ª·¢ÈËÔ±£ºÕÔ¾ê
+//ÈÕ    ÆÚ£º2016-03-09
+//ÎÄ¼şËµÃ÷£ºÊÕÒø»úÀà£¬Ìí¼ÓÉÌÆ·¡¢Ìí¼ÓÓÅ»İ»î¶¯£¬ÊäÈëÌõÂë´òÓ¡¹ºÂòÉÌÆ·ĞÅÏ¢
+////////////////////////////////////////////////////////////
 
 #include "CashRegister.h"
 
 //===========================================
-//Lesså‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šè‡ªå®šä¹‰æ¯”è¾ƒå‡½æ•°
-//å‚æ•°ï¼š    s1ï¼šå¾…æ¯”è¾ƒå¯¹è±¡1
-//		   s2ï¼šå¾…æ¯”è¾ƒå¯¹è±¡1
-//å‡½æ•°è¿”å›ï¼š true/false
-//===========================================
-bool Less(const pair<string,int>& s1, const pair<string,int>& s2)
-{
-	return s1.second > s2.second; //å¯ä»¥è‡ªå·±è®¾å®š
-}
-
-//===========================================
-//deleteSomeCharå‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šåˆ é™¤å­—ç¬¦ä¸²ä¸­çš„ç‰¹å®šå­—ç¬¦
-//å‚æ•°ï¼š    strï¼šå­—ç¬¦ä¸²
-//          chï¼šç‰¹å®šå­—ç¬¦
-//å‡½æ•°è¿”å›ï¼š  æ— 
+//deleteSomeCharº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£ºÉ¾³ı×Ö·û´®ÖĞµÄÌØ¶¨×Ö·û
+//²ÎÊı£º    str£º×Ö·û´®
+//          ch£ºÌØ¶¨×Ö·û
+//º¯Êı·µ»Ø£º  ÎŞ
 //===========================================
 void deleteSomeChar(string& str,char ch)
 {
@@ -42,255 +30,214 @@ void deleteSomeChar(string& str,char ch)
 }
 
 //===========================================
-//CashRegisterå‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šæ„é€ å‡½æ•°
+//CashRegisterº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£º¹¹Ôìº¯Êı
 //===========================================
 CashRegister::CashRegister() {
 	// TODO Auto-generated constructor stub
 }
 
 //===========================================
-//~CashRegisterå‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šææ„å‡½æ•°
+//~CashRegisterº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£ºÎö¹¹º¯Êı
 //===========================================
 CashRegister::~CashRegister() {
 	// TODO Auto-generated destructor stub
-	vector<goods>().swap(PerchaseGoods);	//
-	vector<buyGifts>().swap(bgVec);
+
 }
 
 //===========================================
-//readDataå‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šä»mysqlæ•°æ®åº“ä¸­è¯»æ•°æ®
-//å‚æ•°ï¼š    queryï¼šæŸ¥è¯¢è¯­å¥
-//		   dataSetï¼šè¿”å›çš„ç»“æœé›†
-//å‡½æ•°è¿”å›ï¼š æˆåŠŸæˆ–è€…å¤±è´¥
+//SetPreferentialº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£ºÉèÖÃÓÅ»İ»î¶¯
+//²ÎÊı£º    itemLists£º¹ºÂòÉÌÆ·ÌõÂë×Ö·û´®
+//		   sperator£º×Ö·û´®·Ö¸î·û
+//		   start£ºÆğÊ¼×Ö·û
+//		   end£ºÖÕÖ¹×Ö·û
+//º¯Êı·µ»Ø£º ×Ö·û´®
 //===========================================
-string CashRegister::readData(	const string& query,
-								vector<vector<string> >& dataSet)
+string CashRegister::InputGoodsCode(	const string& itemLists,
+										const char* sperator,
+										const char* start,
+										const char* end)
 {
-	//å®šä¹‰
-	MYSQL mysql;
-	//åˆå§‹åŒ–
-	mysql_init(&mysql);
-	//è¿æ¥
-	if(!mysql_real_connect(&mysql,hostName,userName,password,dbName,port,NULL,CLIENT_MULTI_STATEMENTS))
-	{
-		return "error:connect database error";
-	}
-	//è®¾ç½®æŸ¥è¯¢æ—¶çš„ç¼–ç æ ¼å¼
-	mysql_query(&mysql,"set names utf8");
-	//è°ƒç”¨æŸ¥è¯¢è¯­å¥
-	int ret = mysql_query(&mysql,query.c_str());
-	if(ret)
-	{
-		//å…³é—­æ•°æ®åº“
-		mysql_close(&mysql);
-		return "error:excute sql error";
-	}
-	//è·å–ç»“æœé›†
-	MYSQL_RES* result = mysql_store_result(&mysql);
-	//è·å–å­—æ®µæ•°
-	int number_fields = mysql_num_fields(result);
-	//å¾ªç¯æ‰“å°å„è¡Œ
-	MYSQL_ROW row;
-	while( (row = mysql_fetch_row(result)) != NULL)
-	{
-		vector<string> temp;
-		for(int i=0;i<number_fields;i++)
-		{
-			char* ch = row[i];
-			if( ch == NULL || !strcmp(ch," ") || !strcmp(ch,"(null)"))
-			{
-				ch = "";
-			}
-			string s = ch;
-			temp.push_back(s);
-		}
-		dataSet.push_back(temp);
-	}
-	//é‡Šæ”¾ç»“æœé›†
-	mysql_free_result(result);
-	//å…³é—­æ•°æ®åº“
-	mysql_close(&mysql);
-	return "success";
-}
-
-//===========================================
-//readPreferentialå‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼š è·å¾—å•†å“çš„ä¼˜æƒ ä¿¡æ¯
-//å‚æ•°ï¼š    æ— 
-//å‡½æ•°è¿”å›ï¼š æ— 
-//===========================================
-int CashRegister::readPreferential(const string& pname)
-{
-	char str[256];
-	string query = "select prioprity from preferential where name = "+pname;
-	vector<vector<string> > dataSet;
-	string info = readData(query,dataSet);
-	if( info.compare("success") || dataSet.size() == 0)
-	{
-		return 0;
-	}
-	return atoi(dataSet[0][0].c_str());
-}
-
-//===========================================
-//scanfItemså‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šæ‰«æè´­ä¹°çš„å•†å“ï¼Œè¾“å…¥æ¡ç åˆ—è¡¨ï¼Œè·å¾—è´­ç‰©ä¿¡æ¯
-//å‚æ•°ï¼š    itemListsï¼šæ¡ç åˆ—è¡¨
-//		   speratorï¼šåˆ†å‰²ç¬¦
-//å‡½æ•°è¿”å›ï¼š æ— 
-//===========================================
-string CashRegister::scanfItems(	const string& itemLists,
-									const char* sperator,
-									const char* start,
-									const char* end)
-{
-	//å¤„ç†è¾“å…¥å­—ç¬¦ä¸²ï¼Œå»æ‰å¤´å°¾ç¬¦å·
+	//´¦ÀíÊäÈë×Ö·û´®£¬È¥µôÍ·Î²·ûºÅ
 	size_t spos = itemLists.find(start);
 	size_t epos = itemLists.find(end);
 	if(spos == string::npos || epos == string::npos)
 	{
-		return "error:input string error";
+			return "error:input string error";
 	}
 	string substr = itemLists.substr(spos+1,epos-(spos+2));
-	//ä½¿ç”¨åˆ†å‰²ç¬¦åˆ†å‰²è¾“å…¥çš„å­—ç¬¦ä¸²
+	//Ê¹ÓÃ·Ö¸î·û·Ö¸îÊäÈëµÄ×Ö·û´®
 	char* token = NULL;
 	char* buffer = const_cast<char*>(substr.c_str());
-	while( (token = strsep(&buffer,sperator)) != NULL)
-	{
-		//æŸ¥æ‰¾å­—ç¬¦â€˜-â€™
+	map<string,int> tempMap;
+	token = strtok( buffer, sperator );
+	while (token != NULL)
+	{	
+		//²éÕÒ×Ö·û¡®-¡¯
 		string tempStr = token;
-		//åˆ é™¤'å­—ç¬¦
+		//É¾³ı'×Ö·û
 		deleteSomeChar(tempStr,'\'');
 		size_t pos = tempStr.find('-');
 		if( pos != string::npos)
 		{
 			string code = tempStr.substr(0,pos);
 			string numStr = tempStr.substr(pos+1,tempStr.size()-(pos+1));
-			itemMap[code] += atoi(numStr.c_str());
+			tempMap[code]+= atoi(numStr.c_str());
 		}
 		else
 		{
-			itemMap[tempStr]+=1;
+			tempMap[tempStr]+=1;
 		}
+		token = strtok( NULL, sperator );	
 	}
-	//æŸ¥è¯¢å•†å“ä¿¡æ¯
-	map<string,int>::const_iterator it = itemMap.begin();
-	for( ; it != itemMap.end();++it)
+	map<string,int>::iterator tit = tempMap.begin();
+	for( ; tit != tempMap.end();++tit)
 	{
-		char str[256];
-		sprintf(str,"select name,unit,price,category,barcode,preferentialList from goods where barcode = \"%s\"",(it->first).c_str());
-		string query = str;
-		vector<vector<string> > dataSet;
-		string info = readData(query,dataSet);
-		if( info.compare("success") || dataSet.size() == 0)
-		{
-			continue;
-		}
-		goods g;
-		g.name = dataSet[0][0];
-		g.unit = dataSet[0][1];
-		g.price = atof(dataSet[0][2].c_str());
-		g.category = dataSet[0][3];
-		g.barCode = dataSet[0][4];
-		g.totalNumber = it->second;
-		char* token = NULL;
-		char* buffer = const_cast<char*>(dataSet[0][5].c_str());
-		while( (token = strsep(&buffer,",")) != NULL)
-		{
-			g.preferentialList.push_back(token);
-		}
-		//æŸ¥è¯¢å•†å“çš„ä¼˜æƒ æ´»åŠ¨
-		int size = g.preferentialList.size();
-		//å¾—åˆ°å•†å“çš„ä¼˜æƒ æ´»åŠ¨åç§°
-		if( size == 0)
-		{
-			g.preferentialName = "";
-		}
-		else
-		{
-			vector<pair<string,int> > preVec;
-			for( int i=0;i<size;i++)
-			{
-				preVec.push_back(make_pair(g.preferentialList[i],readPreferential(g.preferentialList[i])));
-			}
-			sort(preVec.begin(),preVec.end(),Less);
-			g.preferentialName = preVec[0].first;
-		}
-		PerchaseGoods.push_back(g);
+		PerchaseGoods[tit->first] = make_pair(stockGoods[tit->first],tit->second);
 	}
 	return "success";
 }
 
 //===========================================
-//printItemså‡½æ•°è¯´æ˜
-//å‡½æ•°åŠŸèƒ½ï¼šæ‰“å°è¾“å‡ºä¿¡æ¯
-//å‚æ•°ï¼š    æ— 
-//å‡½æ•°è¿”å›ï¼š æ— 
+//AddGoodsº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£ºÌí¼ÓÉÌÆ·
+//²ÎÊı£º    g£ºÉÌÆ·
+//º¯Êı·µ»Ø£º ÎŞ
 //===========================================
-void CashRegister::printItems()
+void CashRegister::AddGoods(const goods& g)
 {
-	//æ‰“å°è¾“å‡ºä¿¡æ¯
-	cout<<"***<æ²¡é’±èµšå•†åº—>è´­ç‰©æ¸…å•***"<<endl;
-	int size = PerchaseGoods.size();
-	float totalPrice = 0.0;	//æ€»ä»·æ ¼
-	float savePrice = 0.0;	//èŠ‚çœé’±æ•°
-	for(int i=0;i<size;i++)
+	stockGoods[g.GetCode()] = g;
+}
+
+//===========================================
+//SetPreferentialº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£ºÉèÖÃÓÅ»İ»î¶¯
+//²ÎÊı£º    goodsCategory£ºÉÌÆ·Àà±ğ
+//		   pcate£ºÓÅ»İ»î¶¯Àà±ğ
+//		   pname£ºÓÅ»İ»î¶¯Ãû³Æ
+//		   prioprity£ºÓÅÏÈ¼¶
+//		   rate£ºÕÛ¿ÛÖµ
+//		   buy£ºÂòÊıÁ¿
+//		   gitfs£ºÔùÊıÁ¿
+//º¯Êı·µ»Ø£º ÎŞ
+//===========================================
+void CashRegister::SetPreferential(	const string& goodsCategory,
+									const string& pcate,
+									const string& pname,
+									const int prioprity,
+									const float& rate,
+									const int& buy,
+									const int& gitfs)
+{
+	preferentialInfo p(pcate,pname,prioprity,rate,buy,gitfs);
+	preferential[goodsCategory].push_back(p);
+
+}
+
+//===========================================
+//Testº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£º²âÊÔº¯Êı
+//²ÎÊı£º    ÎŞ
+//º¯Êı·µ»Ø£º ÎŞ
+//===========================================
+void CashRegister::Test()
+{
+	//³õÊ¼»¯ÉÌÆ·
+	goods g1("¿É¿Ú¿ÉÀÖ","Æ¿",3.0,"ÒûÁÏ","ITEM000001");
+	goods g2("ÓğÃ«Çò","¸ö",1.0,"ÌåÓıÓÃÆ·","ITEM000007");
+	goods g3("Æ»¹û","½ï",5.5,"Ë®¹û","ITEM000014");
+	//Ìí¼ÓÉÌÆ·
+	AddGoods(g1);
+	AddGoods(g2);
+	AddGoods(g3);
+	//ÉèÖÃÓÅ»İ»î¶¯ĞÅÏ¢
+	SetPreferential("ÒûÁÏ","ÂòÔù","Âò¶şÔùÒ»",2,0.0,2,1);
+	SetPreferential("ÌåÓıÓÃÆ·","ÂòÔù","Âò¶şÔùÒ»",2,0.0,2,1);
+	SetPreferential("Ë®¹û","ÕÛ¿Û","95ÕÛ",1,0.95,0,0);
+	//ÊäÈëÌõÂë
+	const string inputStr = "['ITEM000001','ITEM000001','ITEM000001','ITEM000007','ITEM000007','ITEM000007','ITEM000007','ITEM000007','ITEM000007','ITEM000014-2']";
+	string info = InputGoodsCode(inputStr,",","[","]");
+	if( !info.compare("success"))
 	{
-		cout<<"åç§°ï¼š"<<PerchaseGoods[i].name<<"ï¼Œæ•°é‡ï¼š"<<PerchaseGoods[i].totalNumber<<PerchaseGoods[i].unit<<"ï¼Œå•ä»·ï¼š"<<PerchaseGoods[i].price<<"(å…ƒ)ï¼Œ";
-		//ä¹°äºŒèµ ä¸€
-		if( PerchaseGoods[i].preferentialName == "ä¹°äºŒèµ ä¸€")
+		vector<pair<goods,int> > goodsPre;
+		//²éÑ¯Ã¿¸öÉÌÆ·ËùÊôÀà±ğµÄÓÅ»İĞÅÏ¢
+		map<string,vector<preferentialInfo> >::iterator fit = preferential.begin(); //
+		map<string,pair<goods,int> >::iterator it = PerchaseGoods.begin();	//
+		for(; it != PerchaseGoods.end();++it)
 		{
-			int realnumber = PerchaseGoods[i].totalNumber - (PerchaseGoods[i].totalNumber/3);
-			PerchaseGoods[i].totalPrice = realnumber*PerchaseGoods[i].price;
-			buyGifts bg;
-			bg.name = PerchaseGoods[i].name;
-			bg.unit = PerchaseGoods[i].unit;
-			bg.number = (PerchaseGoods[i].totalNumber/3);
-			if(bg.number != 0)bgVec.push_back(bg);
-			savePrice += bg.number*PerchaseGoods[i].price;
+			fit = preferential.find((it->second).first.GetCategory());
+			if( fit != preferential.end())
+			{
+				sort((fit->second).begin(),(fit->second).end(),greater<preferentialInfo>());
+				(it->second).first.SetPreferentialInfo((fit->second)[0]);
+			}
+			goodsPre.push_back(it->second);
 		}
-		else if(PerchaseGoods[i].preferentialName == "95æŠ˜") //95æŠ˜
-		{
-			PerchaseGoods[i].totalPrice = (PerchaseGoods[i].totalNumber*PerchaseGoods[i].price)*0.95;
-			PerchaseGoods[i].preferentialPrice = (PerchaseGoods[i].totalNumber*PerchaseGoods[i].price)*0.05;
-			savePrice+=PerchaseGoods[i].preferentialPrice;
-		}
-		else //å…¶ä»–æƒ…å†µ
-		{
-			PerchaseGoods[i].totalPrice = PerchaseGoods[i].totalNumber*PerchaseGoods[i].price;
-		}
-		//è®¡ç®—æ€»ä»·æ ¼
-		totalPrice+=PerchaseGoods[i].totalPrice;
-		//è¾“å‡ºä¿¡æ¯
-		cout<<"å°è®¡ï¼š"<<PerchaseGoods[i].totalPrice<<"(å…ƒ)";
-		if(PerchaseGoods[i].preferentialName == "95æŠ˜")
-		{
-			cout<<", èŠ‚çœï¼š"<<PerchaseGoods[i].preferentialPrice<<"(å…ƒ)";
-		}
-		cout<<endl;
+		printItems(goodsPre);
 	}
-	//ä¹°äºŒèµ ä¸€ä¿¡æ¯æ‰“å°
-	size = bgVec.size();
-	if( size != 0)
-	{
+}
+
+//===========================================
+//printItemsº¯ÊıËµÃ÷
+//º¯Êı¹¦ÄÜ£º´òÓ¡Êä³öĞÅÏ¢
+//²ÎÊı£º    ÎŞ
+//º¯Êı·µ»Ø£º ÎŞ
+//===========================================
+void CashRegister::printItems(	const vector<pair<goods,int> >& goodsInfo)
+{
+	//´òÓ¡Êä³öĞÅÏ¢
+		cout<<"***<Ã»Ç®×¬ÉÌµê>¹ºÎïÇåµ¥***"<<endl;
+		int size = goodsInfo.size();
+		float totalPrice = 0.0;	//×Ü¼Û¸ñ
+		float savePrice = 0.0;	//½ÚÊ¡Ç®Êı
+		map<string,string> buyGiftsInfo;
+		for( int i=0;i<size;i++)
+		{
+			//ÀûÓÃ²ßÂÔÄ£Ê½Àà¼ÆËãÉÌÆ·µÄ¼Û¸ñ
+			CashContext cc(	(goodsInfo[i].first).GetPreferentialInfo().GetCate(),(goodsInfo[i].first).GetPreferentialInfo().GetRate(),
+							(goodsInfo[i].first).GetPreferentialInfo().GetBuy(),(goodsInfo[i].first).GetPreferentialInfo().GetGitfs());
+			float total = cc.GetResult(goodsInfo[i].second,(goodsInfo[i].first).GetPrice());
+			//
+			cout<<"Ãû³Æ£º"<<(goodsInfo[i].first).GetName()<<"£¬ÊıÁ¿£º"<<goodsInfo[i].second<<(goodsInfo[i].first).GetUnit()<<"£¬µ¥¼Û£º"<<(goodsInfo[i].first).GetPrice()<<"(Ôª)£¬";
+			//¼ÆËã×Ü¼Û¸ñ
+			totalPrice += total;
+			savePrice +=  (goodsInfo[i].second*(goodsInfo[i].first).GetPrice()-total);
+			//Êä³öĞÅÏ¢
+			cout<<"Ğ¡¼Æ£º"<<total<<"(Ôª)";
+			if( (goodsInfo[i].first).GetPreferentialInfo().GetCate() == "ÂòÔù")
+			{
+				int number = goodsInfo[i].second/((goodsInfo[i].first).GetPreferentialInfo().GetBuy()+(goodsInfo[i].first).GetPreferentialInfo().GetGitfs());
+				if(number!=0)
+				{
+					char ch[256];
+					sprintf(ch,"Ãû³Æ£º%s£¬ÊıÁ¿£º%d%s\n",(goodsInfo[i].first).GetName().c_str(),number,(goodsInfo[i].first).GetUnit().c_str());
+					buyGiftsInfo[(goodsInfo[i].first).GetPreferentialInfo().GetName()] += ch;
+				}
+			}
+			else if((goodsInfo[i].first).GetPreferentialInfo().GetCate() == "ÕÛ¿Û")
+			{
+				cout<<", ½ÚÊ¡£º"<<(goodsInfo[i].second*(goodsInfo[i].first).GetPrice()-total)<<"(Ôª)";
+			}
+			cout<<endl;
+		}
+		//ÂòÔùĞÅÏ¢´òÓ¡
+		map<string,string>::const_iterator bit = buyGiftsInfo.begin();
+		for( ;bit != buyGiftsInfo.end();++bit)
+		{
+			cout<<"-----------------------"<<endl;
+			cout<<bit->first<<"ÉÌÆ·£º"<<endl;
+			cout<<bit->second;
+		}
+		//×Ü¼Û´òÓ¡
 		cout<<"-----------------------"<<endl;
-		cout<<"ä¹°äºŒèµ ä¸€å•†å“ï¼š"<<endl;
-		for(int i=0;i<size;i++)
+		cout<<"×Ü¼Æ£º"<<totalPrice<<"(Ôª)"<<endl;
+		if( savePrice >0 )
 		{
-			cout<<"åç§°ï¼š"<<bgVec[i].name<<"ï¼Œæ•°é‡ï¼š"<<bgVec[i].number<<bgVec[i].unit<<endl;
+			cout<<"½ÚÊ¡£º"<<savePrice<<"(Ôª)"<<endl;
 		}
-	}
-	//æ€»ä»·æ‰“å°
-	cout<<"-----------------------"<<endl;
-	cout<<"æ€»è®¡ï¼š"<<totalPrice<<"(å…ƒ)"<<endl;
-	if( savePrice >0 )
-	{
-		cout<<"èŠ‚çœï¼š"<<savePrice<<"(å…ƒ)"<<endl;
-	}
-	cout<<"*******************"<<endl;
+		cout<<"*******************"<<endl;
 }
 
 

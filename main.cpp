@@ -1,10 +1,9 @@
-//============================================================================
-// Name        : ThoughtWorks.cpp
-// Author      : zhaojuan
-// Version     :
-// Copyright   : Your copyright notice
-// Description : main function in C++, Ansi-style
-//============================================================================
+////////////////////////////////////////////////////////////
+//ÎÄ ¼ş Ãû£ºmain.cpp
+//¿ª·¢ÈËÔ±£ºÕÔ¾ê
+//ÈÕ    ÆÚ£º2016-03-09
+//ÎÄ¼şËµÃ÷£ºÖ÷º¯Êı
+////////////////////////////////////////////////////////////
 #include "CashRegister.h"
 #include <iostream>
 
@@ -12,20 +11,11 @@ using namespace std;
 
 int main(int argv,char** argc)
 {
-	char str[256];
-	//è¾“å…¥è´­ä¹°å•†å“çš„æ¡ç 
-	cin>>str;
-	//åˆå§‹åŒ–æ”¶é“¶æœºç±»å¯¹è±¡
+	//ÊÕÒø»úÀà
 	CashRegister cg;
-	//è°ƒç”¨æ‰«æå‡½æ•°
-	string info = cg.scanfItems(str,",","[","]");
-	if( info.compare("success"))
-	{
-		cout<<info<<endl;
-		return 0;
-	}
-	//è°ƒç”¨æ‰“å°å‡½æ•°
-	cg.printItems();
+	//µ÷ÓÃ²âÊÔº¯Êı
+	cg.Test();
 	//
+	cin.ignore();
 	return 0;
 }

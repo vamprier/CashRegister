@@ -1,9 +1,9 @@
-/*
- * CashRegister.h
- *
- *  Created on: Mar 2, 2016
- *      Author: zhaojuan
- */
+////////////////////////////////////////////////////////////
+//ÎÄ ¼ş Ãû£ºCashRegister.h
+//¿ª·¢ÈËÔ±£ºÕÔ¾ê
+//ÈÕ    ÆÚ£º2016-03-09
+//ÎÄ¼şËµÃ÷£ºÊÕÒø»úÀà£¬Ìí¼ÓÉÌÆ·¡¢Ìí¼ÓÓÅ»İ»î¶¯£¬ÊäÈëÌõÂë´òÓ¡¹ºÂòÉÌÆ·ĞÅÏ¢
+////////////////////////////////////////////////////////////
 
 #ifndef CASHREGISTER_H_
 #define CASHREGISTER_H_
@@ -16,69 +16,48 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <mysql/mysql.h>
+#include "CashSuper.h"
+#include "basicInfo.h"
+
 
 using namespace std;
 
-#define hostName "10.21.5.106"
-#define dbName "dbtest"
-#define userName "root"
-#define password "123456"
-#define port 3306
-
 /**
- * å•†å“ä¿¡æ¯
+ * ÊÕÒø»úÀà
 */
-struct goods
+class CashRegister
 {
-	string name;					//åç§°
-	string unit;					//è®¡é‡å•ä½
-	float price;					//ä»·æ ¼
-	string category;				//ç±»åˆ«
-	string barCode;					//æ¡å½¢ç 
-	int totalNumber;				//è´­ä¹°æ•°é‡
-	vector<string> preferentialList;	//å•†å“å‚åŠ çš„ä¼˜æƒ æ´»åŠ¨åˆ—è¡¨
-	string preferentialName;		//ä¼˜æƒ åç§°
-	float totalPrice;				//æ€»ä»·æ ¼
-	float preferentialPrice;		//ä¼˜æƒ ä»·æ ¼
-};
-
-/**
- * ä¹°èµ ä¿¡æ¯
-*/
-struct buyGifts
-{
-	string name;	//å•†å“åç§°
-	string unit;	//å•ä½
-	int number;		//æ•°é‡
-};
-
-/**
- * æ”¶é“¶æœºç±»
-*/
-class CashRegister {
 public:
 	explicit CashRegister();
 	~CashRegister();
 
 private:
-	string readData(	const string& query,
-						vector<vector<string> >& dataSet);  //ä»æ•°æ®åº“è¯»å–æ•°æ®
+	//Ìí¼ÓÉÌÆ·
+	void AddGoods(const goods& g);
+	//ÉèÖÃÓÅ»İ»î¶¯ĞÅÏ¢
+	void SetPreferential(	const string& goodsCategory,
+							const string& pcate,
+							const string& pname,
+							const int prioprity,
+							const float& rate,
+							const int& buy,
+							const int& gitfs);
+	//ÊäÈë¹ºÂòµÄÉÌÆ·ÌõÂë´®
+	string InputGoodsCode(	const string& itemLists,
+							const char* sperator,
+							const char* start,
+							const char* end);
+	//´òÓ¡Ğ¡Æ±
+	void printItems(const vector<pair<goods,int> >& goodsInfo);
 
-	int readPreferential(const string& pname);	//è·å¾—ä¼˜æƒ æ´»åŠ¨ä¿¡æ¯
 public:
-
-	string scanfItems(	const string& itemLists,
-						const char* sperator,
-						const char* start,
-						const char* end);	//æ‰«æè´­ä¹°çš„å•†å“
-
-	void printItems();	//æ‰“å°å°ç¥¨
+	//²âÊÔ
+	void Test();
 
 private:
-	map<string,int> itemMap;		//å•†å“çš„è´­ä¹°æ•°é‡
-	vector<goods> PerchaseGoods;	//è´­ä¹°çš„å•†å“ä¿¡æ¯
-	vector<buyGifts> bgVec;//ä¹°äºŒèµ ä¸€å•†å“ä¿¡æ¯
+	map<string,pair<goods,int> > PerchaseGoods;		//¹ºÂòµÄÉÌÆ·ĞÅÏ¢
+	map<string,goods> stockGoods;						//×ÜÉÌÆ·
+	map<string,vector<preferentialInfo> > preferential;	//ÓÅ»İĞÅÏ¢
 
 };
 
