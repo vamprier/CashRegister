@@ -1,0 +1,12 @@
+文件说明：
+1、CashRegister.h、CashRegister.cpp文件是收银机类定义及实现
+2、CashSuper.h、CashSuper.cpp文件是现金计算接口类
+3、CashNomal.h、CashNomal.cpp文件是正常销售时现金计算类定义及实现
+4、CashRate.h、CashRate.cpp文件是打折时现金计算类定义及实现
+5、CashBuyGifts.h、CashBuyGifts.cpp文件是买赠时现金计算类定义及实现
+6、CashContext.h、CashContext.cpp文件是优惠策略模式类定义及实现
+7、goods.h、goods.cpp文件是商品信息类定义及实现
+8、InputScaner.h、InputScaner.cpp文件是文件读取方式接口类
+9、InputTxt.h、InputTxt.cpp文件是读取txt、csv文件类定义及实现
+10、InputContext.h、InputContext.cpp文件是读取文件策略模式类定义及实现
+11、preferentialInfo.h、preferentialInfo.cpp文件是优惠信息类的定义及实现
