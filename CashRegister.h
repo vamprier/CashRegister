@@ -2,7 +2,7 @@
 //文 件 名：CashRegister.h
 //开发人员：赵娟
 //日    期：2016-03-09
-//文件说明：收银机类，添加商品、添加优惠活动，输入条码打印购买商品信息
+//文件说明：收银机类定义
 ////////////////////////////////////////////////////////////
 
 #ifndef CASHREGISTER_H_
@@ -16,8 +16,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "CashSuper.h"
-#include "basicInfo.h"
+#include "CashContext.h"
+#include "goods.h"
+#include "preferentialInfo.h"
+#include "InputContext.h"
 
 
 using namespace std;
@@ -33,20 +35,11 @@ public:
 
 private:
 	//添加商品
-	void AddGoods(const goods& g);
+	void AddGoods(const string& fileName);
 	//设置优惠活动信息
-	void SetPreferential(	const string& goodsCategory,
-							const string& pcate,
-							const string& pname,
-							const int prioprity,
-							const float& rate,
-							const int& buy,
-							const int& gitfs);
+	void SetPreferential(const string& fileName);
 	//输入购买的商品条码串
-	string InputGoodsCode(	const string& itemLists,
-							const char* sperator,
-							const char* start,
-							const char* end);
+	void InputGoodsCode(const string& fileName);
 	//打印小票
 	void printItems(const vector<pair<goods,int> >& goodsInfo);
 
@@ -55,7 +48,7 @@ public:
 	void Test();
 
 private:
-	map<string,pair<goods,int> > PerchaseGoods;		//购买的商品信息
+	map<string,pair<goods,int> > perchaseGoods;		//购买的商品信息
 	map<string,goods> stockGoods;						//总商品
 	map<string,vector<preferentialInfo> > preferential;	//优惠信息
 
